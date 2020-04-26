@@ -1,5 +1,5 @@
 {
-  "name": "file-manager",
+  "name": "files-manager",
   "version": "0.0.1",
   "description": "file manager on server",
   "main": "index.js",
