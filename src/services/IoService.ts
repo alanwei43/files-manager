@@ -24,7 +24,7 @@ export function recursiveFiles(baseDir: string, options: { recursive?: boolean, 
             .map(f => path.join(baseDir, f))
             .map(f => ({
                 stat: fs.statSync(f),
-                path: f
+                path: path.resolve(f)
             }));
 
         if (options.recursive) {
