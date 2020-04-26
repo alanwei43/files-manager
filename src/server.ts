@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 import App from "./app";
 import { FilesController } from "./controllers";
 import yargs from "yargs";
@@ -17,8 +19,10 @@ const argv = yargs
         type: "string",
         default: "./"
     })
+    .version("0.0.1")
     .help()
     .alias('help', 'h').argv;
+
 
 updateBaseDirPath(argv["base-dir"]);
 

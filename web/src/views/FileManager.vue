@@ -1,16 +1,6 @@
 <template>
-  <div id="drag">
-    <div>
-      <input type="file" @change="selectFile" multiple />
-    </div>
-    <div>
-      <div v-for="process in status.process" :key="process.key" v-show="process.show">
-        <b>{{process.name}}</b>
-        <span v-if="process.load === 'loading'">正在上传</span>
-        <span v-if="process.load === 'fail'">上传失败 {{process.error}}</span>
-        <span v-if="process.load === 'success'">上传成功</span>
-      </div>
-    </div>
+  <div>
+    <file-upload :path="route.path" @upload-success="onUploadSuccess" />
     <ol>
       <file-item
         v-for="item in files.data"
@@ -23,16 +13,13 @@
   </div>
 </template>
 <script>
-import { readFileToBase64, getRandomStr } from "../lib/utils";
-import { getJSON, postJSON } from "../lib/api";
+import { getRandomStr, getJSON } from "../lib";
 import FileItem from "../components/FileItem";
+import FileUpload from "../components/FileUpload";
 
 export default {
   data() {
     return {
-      config: {
-        randomName: false
-      },
       files: {
         data: []
       },
@@ -49,7 +36,6 @@ export default {
   mounted() {
     this.loadFiles();
     this.onRouteChange();
-    this.initDrag();
   },
   methods: {
     loadFiles() {
@@ -91,7 +77,7 @@ export default {
                 this.route.path + randomKey,
                 ""
               ) + this.route.parent,
-            name: "../"
+            name: "上一级目录"
           });
         }
       });
@@ -109,105 +95,17 @@ export default {
       }
       this.loadFiles();
     },
-    selectFile(event) {
-      const files = event.target.files || [];
-      files.forEach(f => this.uploadFile(f));
-    },
-    uploadFile(file) {
-      let fileName = file.name;
-      if (this.config.randomName) {
-        const ext = file.name.split(".").slice(-1);
-        fileName = getRandomStr() + "." + ext;
-      }
-
-      const processInfo = {
-        key: getRandomStr(),
-        name: file.name,
-        path: this.route.path,
-        load: "loading",
-        error: undefined,
-        show: true
-      };
-      this.status.process.push(processInfo);
-      readFileToBase64(file)
-        .then(data =>
-          postJSON("/api/files", {
-            name: fileName,
-            path: this.route.path,
-            data: data
-          })
-        )
-        .then(res => {
-          if (res.success) {
-            processInfo.load = "success";
-            this.files.data.push({
-              ctime: new Date().toJSON(),
-              isDir: false,
-              isFile: true,
-              mtime: new Date().toJSON(),
-              name: fileName,
-              path: undefined,
-              size: file.size
-            });
-            return "success";
-          } else {
-            throw new Error("upload_fail");
-          }
-        })
-        .catch(err => {
-          processInfo.load = "fail";
-          processInfo.error = err.message || err;
-          return "fail";
-        })
-        .then(status => {
-          setTimeout(
-            () => (processInfo.show = false),
-            status === "success" ? 3000 : 5000
-          );
-        });
-    },
-    initDrag() {
-      const ele = document.documentElement;
-      ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
-        ele.addEventListener(
-          eventName,
-          e => {
-            e.preventDefault();
-            e.stopPropagation();
-          },
-          false
-        );
-      });
-      ["dragenter", "dragover"].forEach(eventName => {
-        ele.addEventListener(
-          eventName,
-          () => (this.status.onDraging = true),
-          false
-        );
-      });
-      ["dragleave", "drop"].forEach(eventName => {
-        ele.addEventListener(
-          eventName,
-          () => (this.status.onDraging = false),
-          false
-        );
-      });
-      ele.addEventListener(
-        "drop",
-        event => {
-          const files = event.dataTransfer.files || [];
-          files.forEach(f => this.uploadFile(f));
-        },
-        false
-      );
-    },
     onDeleteFile(item) {
       const index = this.files.data.indexOf(item);
       this.files.data.splice(index, 1);
+    },
+    onUploadSuccess(file) {
+      this.files.data.push(file);
     }
   },
   components: {
-    "file-item": FileItem
+    "file-item": FileItem,
+    "file-upload": FileUpload
   },
   watch: {
     $route: "onRouteChange"

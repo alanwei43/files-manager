@@ -2,17 +2,14 @@
   <li>
     <router-link :to="item.link" v-if="item.isDir">{{item.name}}</router-link>
     <span v-if="item.isFile">{{item.name}}</span> &nbsp;
-    <button
-      v-if="item.isFile"
-      class="btn btn-warning btn-xs"
-      @click="deleteFile(item)"
-    >Delete</button> &nbsp;
+    <button v-if="item.isFile" class="btn btn-warning btn-xs" @click="deleteFile(item)">删除</button> &nbsp;
     <a
       v-if="downloadLink"
       class="btn btn-default btn-xs"
       target="blank"
       :href="downloadLink"
-    >Download</a>
+    >下载</a> &nbsp;
+    <span v-if="item.isFile" class="btn btn-default btn-xs">打开</span>
   </li>
 </template>
 <script>
@@ -25,6 +22,12 @@ export default {
     path: {
       required: true
     }
+  },
+  data() {
+    return {
+    };
+  },
+  mounted() {
   },
   methods: {
     deleteFile(item) {

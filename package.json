@@ -1,12 +1,19 @@
 {
   "name": "file-manager",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "file manager on server",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node-dev src/server.ts -p 3005 -d /data/temporary",
-    "build": "tsc"
+    "build": "tsc",
+    "docker:build": "docker build -t files-manager:0.0.1 ./",
+    "docker:tag": "docker tag files-manager:0.0.1 alanway/files-manager:latest",
+    "docker:push": "docker push alanway/files-manager:latest",
+    "npm:pub":"npm publish"
+  },
+  "bin": {
+    "file-manager": "./dist/server.js"
   },
   "repository": {
     "type": "git",

@@ -76,6 +76,6 @@ export class FilesController implements Controller {
     downloadFile(req: express.Request, res: express.Response) {
         const fileName = (req.query.name || "") + "";
         const filePath = path.resolve(path.join(getBaseDirPath(), (req.query.path || "") + "", fileName));
-        res.sendFile(filePath);
+        res.download(filePath, fileName);
     }
 }

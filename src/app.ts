@@ -25,7 +25,7 @@ class App {
                 next();
                 return;
             }
-            if (req.path.startsWith("/js") || req.path.startsWith("/css")) {
+            if (req.path.startsWith("/js") || req.path.startsWith("/resources")) {
                 res.sendFile(path.resolve(path.join("static", req.path)));
                 return;
             }
