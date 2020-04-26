@@ -1,25 +1,35 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { promises as fs } from "fs";
-import { sep } from "path";
+import { Controller } from "./controllers";
 
-const app = express();
-const PORT: Number = 8002
+class App {
+    public app: express.Application;
+    public port: Number;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+    constructor(controllers: Controller[], port: Number) {
+        this.app = express();
+        this.port = port;
 
-app.use("/", express.static(`${__dirname}/www`));
+        this.initializeMiddlewares();
+        this.initializeControllers(controllers);
+    }
 
-app.all("/gitlab", (req, res) => {
-    const logPath = `${__dirname}${sep}www${sep}${Date.now()}.log`;
-    fs.writeFile(logPath, JSON.stringify(req.body)).then(value => {
-        res.send(`${logPath}: Write okay`);
-    }, error => {
-        res.send(`${logPath}: Write failed: ${error}`);
-    });
-});
+    private initializeMiddlewares() {
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({ extended: true }));
+    }
 
-app.listen(PORT, () => {
-    console.log(`listen ${PORT}`);
-});
+    private initializeControllers(controllers: Controller[]) {
+        controllers.forEach((controller) => {
+            this.app.use('/', controller.router);
+        });
+    }
+
+    public listen() {
+        this.app.listen(this.port, () => {
+            console.log(`App listening on the port ${this.port}`);
+        });
+    }
+}
+
+export default App;
