@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { Controller } from "./controllers";
+import path from "path";
 
 class App {
     public app: express.Application;
@@ -19,6 +20,17 @@ class App {
             limit: "50mb"
         }));
         this.app.use(bodyParser.urlencoded({ extended: true }));
+        this.app.use((req, res, next) => {
+            if (req.path.startsWith("/api")) {
+                next();
+                return;
+            }
+            if (req.path.startsWith("/js") || req.path.startsWith("/css")) {
+                res.sendFile(path.resolve(path.join("static", req.path)));
+                return;
+            }
+            res.sendFile(path.resolve("static/index.html"));
+        })
     }
 
     private initializeControllers(controllers: Controller[]) {

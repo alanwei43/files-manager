@@ -60,7 +60,7 @@ export class FilesController implements Controller {
         const filePath = path.join(getBaseDirPath(), req.body.path, fileName),
             base64 = req.body.data;
         const buffer = Buffer.from(base64, 'base64');
-        fs.writeFileSync(filePath, buffer, { encoding: "utf8" });
+        fs.writeFileSync(filePath, buffer, { encoding: "utf8", mode: 0o666 });
         res.json({
             success: true
         });

@@ -91,7 +91,7 @@ export default {
                 this.route.path + randomKey,
                 ""
               ) + this.route.parent,
-            name: ".."
+            name: "../"
           });
         }
       });
@@ -167,7 +167,7 @@ export default {
         });
     },
     initDrag() {
-      const ele = document.querySelector("#drag");
+      const ele = document.documentElement;
       ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
         ele.addEventListener(
           eventName,
