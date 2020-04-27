@@ -12,7 +12,7 @@ export default {
     };
   },
   mounted() {
-    getJSON("/resources/config.json").then(config => {
+    getJSON("/api/config").then(config => {
       this.share.config = config;
       document.title = this.share.config.title;
     });

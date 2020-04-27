@@ -1,5 +1,5 @@
 import express from "express";
-import { Controller } from "./controllers";
+import { Controller } from "./";
 import { recursiveFiles } from "../services";
 import path from "path";
 import { getBaseDirPath } from "../config";
@@ -21,6 +21,8 @@ export class FilesController implements Controller {
         this.router.post(`${this.basePath}/files`, this.uploadFile);
         this.router.delete(`${this.basePath}/files`, this.deleteFile);
         this.router.get(`${this.basePath}/file`, this.downloadFile);
+        this.router.post(`${this.basePath}/dir`, this.createDir);
+        this.router.delete(`${this.basePath}/dir`, this.createDir);
     }
     listFiles(rootPath: string, response: express.Response) {
         const rootPathVal = path.resolve(path.join(getBaseDirPath(), rootPath));
@@ -46,7 +48,6 @@ export class FilesController implements Controller {
         });
         response.json({
             rootPath: rootPathVal,
-            sysRootPath: getBaseDirPath(),
             totalCount: files.length,
             files: files,
             parent: {
@@ -77,5 +78,26 @@ export class FilesController implements Controller {
         const fileName = (req.query.name || "") + "";
         const filePath = path.resolve(path.join(getBaseDirPath(), (req.query.path || "") + "", fileName));
         res.download(filePath, fileName);
+    }
+    createDir(req: express.Request, res: express.Response) {
+        /**
+         * {name: "dir_name", path: "/hello/world"}
+         */
+        const fullDirPath = path.join(getBaseDirPath(), req.body.path || "", req.body.name || "");
+        if (req.method.toLowerCase() === "post") {
+            fs.mkdirSync(fullDirPath, {
+                recursive: true
+            });
+        }
+        if (req.method.toLowerCase() === "delete") {
+            fs.rmdirSync(fullDirPath);
+        }
+        res.json({
+            success: true,
+            result: {
+                relDir: fullDirPath,
+                absDir: path.resolve(fullDirPath),
+            }
+        });
     }
 }

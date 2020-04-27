@@ -38,3 +38,7 @@ export function copyToClipboard(str) {
         document.getSelection().addRange(selected);   // Restore the original selection
     }
 }
+
+export function combinePath(sep, ...path) {
+    return path.join(sep).replace(/(\/{2,})/, "/").replace(/(\\{2,})/, "\\");
+}

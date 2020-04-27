@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node-dev src/server.ts -p 3005 -d /data/temporary",
+    "start": "ts-node-dev src/server.ts -p 3009 -d ./static",
     "build": "tsc",
     "docker:build": "docker build -t files-manager:0.0.1 ./",
     "docker:tag": "docker tag files-manager:0.0.1 alanway/files-manager:latest",

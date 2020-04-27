@@ -1,6 +1,5 @@
 <template>
   <div>
-      <h5>上传文件: </h5>
     <input type="file" @change="selectFile" multiple />
     <div v-for="process in status.process" :key="process.key" v-show="process.show">
       <b>{{process.name}}</b>
@@ -8,7 +7,6 @@
       <span v-if="process.load === 'fail'">上传失败 {{process.error}}</span>
       <span v-if="process.load === 'success'">上传成功</span>
     </div>
-    <hr />
   </div>
 </template>
 <script>

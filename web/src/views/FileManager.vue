@@ -1,19 +1,64 @@
 <template>
-  <div>
-    <file-upload :path="route.path" @upload-success="onUploadSuccess" />
-    <ol>
-      <file-item
-        v-for="item in files.data"
-        :key="item.path || item.name"
-        :item="item"
-        :path="route.path"
-        @delete-file="onDeleteFile"
-      />
-    </ol>
+  <div class="container">
+    <div>&nbsp;</div>
+    <div class="panel panel-default">
+      <div class="panel-heading">文件上传</div>
+      <div class="panel-body">
+        <file-upload :path="route.path" @upload-success="onUploadSuccess" />
+      </div>
+    </div>
+    <div class="panel panel-primary">
+      <div class="panel-heading">文件管理</div>
+      <div class="panel-body">
+        <div class="col-row">
+          <div class="col-sm-4 col-xs-12">
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" placeholder="请输入目录名称" v-model="vm.dirName" />
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" @click="doCreateDir">创建目录</button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>名称</th>
+            <th>路径</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <file-item
+            v-for="item in files.data"
+            :key="item.path || item.name"
+            :item="item"
+            :path="route.path"
+            @delete-file="onDeleteFile"
+          />
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3">
+              <span style="padding-right: 10px; font-size: 12px">
+                文件数量:
+                <mark>{{files.totalCount}}</mark>
+              </span>
+              <span style="padding-right: 10px; font-size: 12px">
+                总大小:
+                <mark>{{fileTotalSize}}</mark>
+              </span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   </div>
 </template>
 <script>
-import { getRandomStr, getJSON } from "../lib";
+import { getRandomStr, getFiles, createDir } from "../lib";
 import FileItem from "../components/FileItem";
 import FileUpload from "../components/FileUpload";
 
@@ -21,7 +66,12 @@ export default {
   data() {
     return {
       files: {
-        data: []
+        data: [],
+        totalCount: null,
+        totalSize: 0
+      },
+      vm: {
+        dirName: ""
       },
       route: {
         path: undefined,
@@ -43,7 +93,8 @@ export default {
         return;
       }
       const routePath = this.route.path;
-      getJSON("/api/files", { path: routePath }).then(res => {
+      this.files.totalSize = 0;
+      getFiles(routePath).then(res => {
         if (routePath !== this.route.path) {
           return;
         }
@@ -64,12 +115,15 @@ export default {
                 item.name
               )}&path=${encodeURIComponent(this.route.path)}`;
             }
+            this.files.totalSize += item.size || 0;
             return item;
           });
+        this.files.totalCount = res.totalCount;
         if (typeof this.route.parent === "string") {
           const randomKey = getRandomStr();
 
           this.files.data.unshift({
+            isParent: true,
             isDir: true,
             isFile: false,
             link:
@@ -101,6 +155,26 @@ export default {
     },
     onUploadSuccess(file) {
       this.files.data.push(file);
+    },
+    doCreateDir() {
+      const name = this.vm.dirName;
+      createDir(this.route.path, name).then(response => {
+        if (response.success) {
+          window.location.reload();
+        }
+      });
+    }
+  },
+  computed: {
+    fileTotalSize() {
+      let size = this.files.totalSize / 1024; // kb
+      let unit = "KB";
+      if (size > 100) {
+        size = size / 1024; // mb
+        unit = "MB";
+      }
+
+      return size.toFixed(2) + unit;
     }
   },
   components: {

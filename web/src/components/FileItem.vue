@@ -1,19 +1,26 @@
 <template>
-  <li>
-    <router-link :to="item.link" v-if="item.isDir">{{item.name}}</router-link>
-    <span v-if="item.isFile">{{item.name}}</span> &nbsp;
-    <button v-if="item.isFile" class="btn btn-warning btn-xs" @click="deleteFile(item)">删除</button> &nbsp;
-    <a
-      v-if="downloadLink"
-      class="btn btn-default btn-xs"
-      target="blank"
-      :href="downloadLink"
-    >下载</a> &nbsp;
-    <span v-if="item.isFile" class="btn btn-default btn-xs">打开</span>
-  </li>
+  <tr>
+    <td>
+      <router-link :to="item.link" v-if="item.isDir">{{item.name}}</router-link>
+      <span v-if="item.isFile">{{item.name}}</span> &nbsp;
+    </td>
+    <td>
+      <code v-if="fileAddress">{{fileAddress}}</code>
+    </td>
+    <td>
+      <button v-if="!item.isParent" class="btn btn-warning btn-xs" @click="doDeleteFile(item)">删除</button> &nbsp;
+      <a
+        v-if="downloadLink"
+        class="btn btn-default btn-xs"
+        target="blank"
+        :href="downloadLink"
+      >下载</a> &nbsp;
+      <!-- <span v-if="item.isFile" class="btn btn-default btn-xs">打开</span> -->
+    </td>
+  </tr>
 </template>
 <script>
-import { request } from "../lib/api";
+import { ShareStore, combinePath, deleteFile, deleteDir } from "../lib";
 export default {
   props: {
     item: {
@@ -24,17 +31,16 @@ export default {
     }
   },
   data() {
-    return {
-    };
+    return {};
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
-    deleteFile(item) {
-      request("DELETE", "/api/files", null, {
-        name: this.item.name,
-        path: this.path
-      }).then(res => {
+    doDeleteFile(item) {
+      let fn = deleteFile;
+      if(item.isDir){
+        fn = deleteDir;
+      }
+      fn(this.path, this.item.name).then(res => {
         if (res.success) {
           this.$emit("delete-file", item);
         }
@@ -49,6 +55,17 @@ export default {
         )}&path=${encodeURIComponent(this.path)}`;
       }
       return undefined;
+    },
+    fileAddress() {
+      if (this.item.isParent) {
+        return "";
+      }
+      return combinePath(
+        ShareStore.config.pathSeperator,
+        ShareStore.config.clientRootPath,
+        this.path,
+        this.item.name
+      );
     }
   }
 };

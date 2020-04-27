@@ -1,7 +1,6 @@
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link>|
-    <router-link to="/list-files">list files</router-link>
+    <router-link to="/files-manager">文件管理</router-link>
   </div>
 </template>
 

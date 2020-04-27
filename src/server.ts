@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 import App from "./app";
-import { FilesController } from "./controllers";
+import { FilesController, ConfigController } from "./controllers";
 import yargs from "yargs";
 import { updateBaseDirPath } from "./config";
 
@@ -28,6 +28,7 @@ updateBaseDirPath(argv["base-dir"]);
 
 const app = new App([
     new FilesController("/api"),
+    new ConfigController("/api"),
 ], parseInt(argv.port));
 
 app.listen();

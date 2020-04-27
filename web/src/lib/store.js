@@ -1,6 +1,8 @@
 export const ShareStore = {
     config: {
-        title: undefined,
-        copyBase: undefined
+        title: "",
+        clientRootPath: "",
+        sysRootPath: "",
+        pathSeperator: ""
     }
 };
