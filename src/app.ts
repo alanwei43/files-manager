@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import { Controller } from "./controllers";
 import path from "path";
+import { uploadFileSize } from "./config/config.json";
 
 class App {
     public app: express.Application;
@@ -13,11 +14,21 @@ class App {
 
         this.initializeMiddlewares();
         this.initializeControllers(controllers);
+        this.handlerError();
     }
 
+    private handlerError() {
+        this.app.use(function (err: any, req: any, res: any, next: any) {
+            console.error(err.stack)
+            res.status(500).json({
+                success: false,
+                message: err.message
+            });
+        });
+    }
     private initializeMiddlewares() {
         this.app.use(bodyParser.json({
-            limit: "50mb"
+            limit: uploadFileSize + "mb"
         }));
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use((req, res, next) => {
@@ -30,7 +41,7 @@ class App {
                 return;
             }
             res.sendFile(path.resolve("static/index.html"));
-        })
+        });
     }
 
     private initializeControllers(controllers: Controller[]) {

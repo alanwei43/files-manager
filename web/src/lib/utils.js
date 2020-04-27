@@ -42,3 +42,25 @@ export function copyToClipboard(str) {
 export function combinePath(sep, ...path) {
     return path.join(sep).replace(/(\/{2,})/, "/").replace(/(\\{2,})/, "\\");
 }
+
+export function humanSize(bytes) {
+    const kb = bytes / 1024;
+    if (kb < 1024) {
+        return {
+            size: kb.toFixed(2),
+            unit: "KB"
+        }
+    }
+    const mb = kb / 1024;
+    if (mb < 1024) {
+        return {
+            size: mb.toFixed(2),
+            unit: "MB"
+        };
+    }
+    const gb = mb / 1024;
+    return {
+        size: gb.toFixed(2),
+        unit: "GB"
+    };
+}

@@ -1,7 +1,7 @@
 <template>
   <tr :title="item.name">
     <template v-if="item.isParent">
-      <td colspan="3">
+      <td colspan="4">
         <router-link :to="item.link" class="small">{{item.name}}</router-link>
       </td>
     </template>
@@ -19,6 +19,10 @@
         <code v-if="fileAddress">{{fileAddress}}</code>
       </td>
       <td>
+        <span class="small text-info" v-if="item.isFile" title="大小 | 修改时间">{{item.size | showSize}} &nbsp; | &nbsp; {{item.mtime}}</span>
+        <span v-else>--</span>
+      </td>
+      <td>
         <button class="btn btn-danger btn-xs" @click="doDeleteFile(item)">删除</button> &nbsp;
         <a
           v-if="downloadLink"
@@ -31,7 +35,13 @@
   </tr>
 </template>
 <script>
-import { ShareStore, combinePath, deleteFile, deleteDir } from "../lib";
+import {
+  ShareStore,
+  combinePath,
+  deleteFile,
+  deleteDir,
+  humanSize
+} from "../lib";
 export default {
   props: {
     item: {
@@ -56,6 +66,11 @@ export default {
           this.$emit("delete-file", item);
         }
       });
+    }
+  },
+  filters: {
+    showSize(size) {
+      return humanSize(size).size + humanSize(size).unit;
     }
   },
   computed: {

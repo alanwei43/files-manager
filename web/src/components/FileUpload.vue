@@ -1,8 +1,15 @@
 <template>
   <div>
     <input type="file" @change="selectFile" multiple />
-    <div class="small" v-for="process in status.process" :key="process.key" v-show="process.show" :class="{'text-info': process.load === 'loading', 'text-success': process.load === 'success', 'text-danger': process.load === 'fail'}">
-      <mark>{{process.name}}</mark>
+    <hr v-if="status.process.filter(item => item.show).length" />
+    <div
+      class="small"
+      v-for="process in status.process"
+      :key="process.key"
+      v-show="process.show"
+      :class="{'text-info': process.load === 'loading', 'text-success': process.load === 'success', 'text-danger': process.load === 'fail'}"
+    >
+      <i>{{process.name}}</i> &nbsp;
       <span v-if="process.load === 'loading'">正在上传</span>
       <span v-if="process.load === 'fail'">上传失败 {{process.error}}</span>
       <span v-if="process.load === 'success'">上传成功</span>
@@ -74,7 +81,7 @@ export default {
             });
             return "success";
           } else {
-            throw new Error("upload_fail");
+            throw new Error(res.message || "upload_fail");
           }
         })
         .catch(err => {
@@ -85,7 +92,7 @@ export default {
         .then(status => {
           setTimeout(
             () => (processInfo.show = false),
-            status === "success" ? 2000 : 5000
+            (status === "success" ? 2 : 60) * 1000
           );
         });
     },

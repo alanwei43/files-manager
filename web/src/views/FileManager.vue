@@ -32,6 +32,7 @@
             <tr>
               <th>名称</th>
               <th>路径</th>
+              <th>信息</th>
               <th>操作</th>
             </tr>
           </thead>
@@ -46,7 +47,7 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="3">
+              <td colspan="4">
                 <span style="padding-right: 10px; font-size: 12px">
                   文件数量:
                   <mark>{{fileTotalCount}}</mark>
@@ -64,7 +65,13 @@
   </div>
 </template>
 <script>
-import { getRandomStr, getFiles, createDir, ShareStore } from "../lib";
+import {
+  getRandomStr,
+  getFiles,
+  createDir,
+  ShareStore,
+  humanSize
+} from "../lib";
 import FileItem from "../components/FileItem";
 import FileUpload from "../components/FileUpload";
 
@@ -180,14 +187,13 @@ export default {
       return this.files.data.filter(item => item.isFile).length;
     },
     fileTotalSize() {
-      let size = this.files.totalSize / 1024; // kb
-      let unit = "KB";
-      if (size > 100) {
-        size = size / 1024; // mb
-        unit = "MB";
-      }
+      const totalSize = this.files.data.reduce(
+        (prev, next) => prev + (next.size || 0),
+        0
+      );
+      const result = humanSize(totalSize);
 
-      return size.toFixed(2) + unit;
+      return result.size + result.unit;
     }
   },
   components: {
