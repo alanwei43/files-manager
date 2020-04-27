@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import { Controller } from "./controllers";
 import path from "path";
-import { uploadFileSize } from "./config/config.json";
+import Config from "./config/config.json";
 
 class App {
     public app: express.Application;
@@ -28,7 +28,7 @@ class App {
     }
     private initializeMiddlewares() {
         this.app.use(bodyParser.json({
-            limit: uploadFileSize + "mb"
+            limit: (Config.uploadFileSize || "50") + "mb"
         }));
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use((req, res, next) => {
