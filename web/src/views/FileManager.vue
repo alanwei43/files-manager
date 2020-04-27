@@ -1,70 +1,77 @@
 <template>
-  <div class="container">
-    <div>&nbsp;</div>
-    <div class="panel panel-default">
-      <div class="panel-heading">文件上传</div>
-      <div class="panel-body">
-        <file-upload :path="route.path" @upload-success="onUploadSuccess" />
+  <div>
+    <ol class="breadcrumb">
+      <li>
+        <a href="javascript:void(0)">{{share.config.title}}</a>
+      </li>
+    </ol>
+    <div class="container-fluid">
+      <div class="panel panel-default">
+        <div class="panel-heading">文件上传</div>
+        <div class="panel-body">
+          <file-upload :path="route.path" @upload-success="onUploadSuccess" />
+        </div>
       </div>
-    </div>
-    <div class="panel panel-primary">
-      <div class="panel-heading">文件管理</div>
-      <div class="panel-body">
-        <div class="col-row">
-          <div class="col-sm-4 col-xs-12">
-            <div class="input-group input-group-sm">
-              <input type="text" class="form-control" placeholder="请输入目录名称" v-model="vm.dirName" />
-              <span class="input-group-btn">
-                <button class="btn btn-default" type="button" @click="doCreateDir">创建目录</button>
-              </span>
+      <div class="panel panel-primary">
+        <div class="panel-heading">文件管理</div>
+        <div class="panel-body">
+          <div class="col-row">
+            <div class="col-sm-4 col-xs-12">
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control" placeholder="请输入目录名称" v-model="vm.dirName" />
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" @click="doCreateDir">创建目录</button>
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>名称</th>
-            <th>路径</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <file-item
-            v-for="item in files.data"
-            :key="item.path || item.name"
-            :item="item"
-            :path="route.path"
-            @delete-file="onDeleteFile"
-          />
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="3">
-              <span style="padding-right: 10px; font-size: 12px">
-                文件数量:
-                <mark>{{files.totalCount}}</mark>
-              </span>
-              <span style="padding-right: 10px; font-size: 12px">
-                总大小:
-                <mark>{{fileTotalSize}}</mark>
-              </span>
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>名称</th>
+              <th>路径</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <file-item
+              v-for="item in files.data"
+              :key="item.path || item.name"
+              :item="item"
+              :path="route.path"
+              @delete-file="onDeleteFile"
+            />
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3">
+                <span style="padding-right: 10px; font-size: 12px">
+                  文件数量:
+                  <mark>{{fileTotalCount}}</mark>
+                </span>
+                <span style="padding-right: 10px; font-size: 12px">
+                  总大小:
+                  <mark>{{fileTotalSize}}</mark>
+                </span>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </div>
   </div>
 </template>
 <script>
-import { getRandomStr, getFiles, createDir } from "../lib";
+import { getRandomStr, getFiles, createDir, ShareStore } from "../lib";
 import FileItem from "../components/FileItem";
 import FileUpload from "../components/FileUpload";
 
 export default {
   data() {
     return {
+      share: ShareStore,
       files: {
         data: [],
         totalCount: null,
@@ -166,6 +173,9 @@ export default {
     }
   },
   computed: {
+    fileTotalCount() {
+      return this.files.data.filter(item => item.isFile).length;
+    },
     fileTotalSize() {
       let size = this.files.totalSize / 1024; // kb
       let unit = "KB";

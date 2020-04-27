@@ -1,8 +1,6 @@
-FROM node:alpine
+FROM alanway/files-manager-dep:latest
 
 WORKDIR /app
-COPY package.json package-lock.json tsconfig.json ./ 
-RUN npm install --registry=https://registry.npm.taobao.org
 COPY src/ ./src
 COPY static/ ./static
 RUN npm run build && mkdir /data

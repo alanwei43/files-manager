@@ -14,10 +14,10 @@ export class ConfigController implements Controller {
     }
     initRouters() {
         this.router.get(`${this.basePath}/config`, (req, res) => {
-            if (Config.pathSeperator === null) {
+            if (!Config.pathSeperator) {
                 Config.pathSeperator = path.sep;
             }
-            if (Config.sysRootPath === null) {
+            if (!Config.sysRootPath) {
                 Config.sysRootPath = getBaseDirPath();
             }
             res.json(Config);
