@@ -18,6 +18,15 @@
 #nav a.router-link-exact-active {
   color: #42b983;
 } */
-.on-drag{
-  background-color: bisque;
+
+.text-ellipsis{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+.text-scroll{
+  overflow: scroll;
+  display: inline-block;
+  white-space: nowrap;
 }

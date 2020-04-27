@@ -1,13 +1,13 @@
 <template>
   <div>
-    <ol class="breadcrumb">
+    <ol class="breadcrumb" v-if="share.config.title">
       <li>
         <a href="javascript:void(0)">{{share.config.title}}</a>
       </li>
     </ol>
-    <div class="container-fluid">
+    <div class="container-fluid" style="margin-top: 1em;">
       <div class="panel panel-default">
-        <div class="panel-heading">文件上传</div>
+        <div class="panel-heading">拖拽/选择文件上传</div>
         <div class="panel-body">
           <file-upload :path="route.path" @upload-success="onUploadSuccess" />
         </div>
@@ -161,6 +161,9 @@ export default {
       this.files.data.splice(index, 1);
     },
     onUploadSuccess(file) {
+      if (this.files.data.filter(f => f.name === file.name).length) {
+        return;
+      }
       this.files.data.push(file);
     },
     doCreateDir() {

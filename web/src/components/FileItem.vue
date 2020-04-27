@@ -1,14 +1,19 @@
 <template>
-  <tr>
+  <tr :title="item.name">
     <td>
-      <router-link :to="item.link" v-if="item.isDir">{{item.name}}</router-link>
-      <span v-if="item.isFile">{{item.name}}</span> &nbsp;
+      <router-link
+        :to="item.link"
+        v-if="item.isDir"
+        class="text-ellipsis"
+        style="max-width: 200px;"
+      >{{item.name}}</router-link>
+      <span class="text-ellipsis" style="max-width: 200px;" v-if="item.isFile">{{item.name}}</span> &nbsp;
     </td>
     <td>
       <code v-if="fileAddress">{{fileAddress}}</code>
     </td>
     <td>
-      <button v-if="!item.isParent" class="btn btn-warning btn-xs" @click="doDeleteFile(item)">删除</button> &nbsp;
+      <button v-if="!item.isParent" class="btn btn-danger btn-xs" @click="doDeleteFile(item)">删除</button> &nbsp;
       <a
         v-if="downloadLink"
         class="btn btn-default btn-xs"
@@ -37,7 +42,7 @@ export default {
   methods: {
     doDeleteFile(item) {
       let fn = deleteFile;
-      if(item.isDir){
+      if (item.isDir) {
         fn = deleteDir;
       }
       fn(this.path, this.item.name).then(res => {
