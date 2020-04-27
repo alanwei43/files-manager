@@ -134,7 +134,7 @@ export default {
             isDir: true,
             isFile: false,
             link:
-              (location.pathname + randomKey).replace(
+              (decodeURIComponent(location.pathname) + randomKey).replace(
                 this.route.path + randomKey,
                 ""
               ) + this.route.parent,

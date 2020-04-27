@@ -13,8 +13,7 @@
     "docker:dep-push": "docker push alanway/files-manager-dep:latest",
 
     "docker:build": "docker build -t files-manager:0.0.1 ./",
-    "docker:tag": "docker tag files-manager:0.0.1 alanway/files-manager:latest",
-    "docker:push": "docker push alanway/files-manager:latest",
+    "docker:push": "docker tag files-manager:0.0.1 alanway/files-manager:latest && docker push alanway/files-manager:latest",
     "docker:run": "docker run -d -P --name files-manager-test files-manager:0.0.1",
     "npm:pub":"npm publish"
   },
