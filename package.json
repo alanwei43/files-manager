@@ -1,5 +1,5 @@
 {
-  "name": "files-manager",
+  "name": "@js-core/files-manager",
   "version": "0.0.1",
   "description": "file manager on server",
   "main": "index.js",
@@ -16,7 +16,7 @@
     "npm:pub": "npm publish"
   },
   "bin": {
-    "file-manager": "./dist/server.js"
+    "files-manager": "./dist/server.js"
   },
   "repository": {
     "type": "git",

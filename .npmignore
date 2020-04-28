@@ -1,2 +1,6 @@
 web/
 src/
+Dockerfile
+*.Dockerfile
+tsconfig.json
+.dockerignore
