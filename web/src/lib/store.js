@@ -3,7 +3,6 @@ export const ShareStore = {
         "title": "",
         "clientRootPath": "",
         "uploadFileSize": 50,
-        "sysRootPath": "",
         "pathSeperator": ""
     }
 };

@@ -1,8 +1,6 @@
 import express from "express";
 import { Controller } from "./";
-import { getBaseDirPath } from "../config";
-import Config from "../config/config.json";
-import path from "path";
+import { getConfigurations } from "../config";
 
 export class ConfigController implements Controller {
     public router: express.Router;
@@ -14,13 +12,7 @@ export class ConfigController implements Controller {
     }
     initRouters() {
         this.router.get(`${this.basePath}/config`, (req, res) => {
-            if (!Config.pathSeperator) {
-                Config.pathSeperator = path.sep;
-            }
-            if (!Config.sysRootPath) {
-                Config.sysRootPath = getBaseDirPath();
-            }
-            res.json(Config);
+            res.json(getConfigurations());
         });
     }
 }

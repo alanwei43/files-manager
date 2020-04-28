@@ -3,13 +3,14 @@
 import App from "./app";
 import { FilesController, ConfigController } from "./controllers";
 import yargs from "yargs";
-import { updateBaseDirPath } from "./config";
+import { refreshConfigurations, getConfigurations } from "./config";
+import path from "path";
 
 
 const argv = yargs
     .option("port", {
         alias: "p",
-        description: "监听端口号",
+        description: "端口号",
         type: "number",
         default: "8080"
     })
@@ -19,16 +20,27 @@ const argv = yargs
         type: "string",
         default: "./"
     })
-    .version("0.0.1")
+    .option("config-path", {
+        alias: "c",
+        description: "配置文件路径",
+        type: "string",
+        default: path.join(__dirname, "./config/config.json")
+    })
+    .version("0.0.3")
     .help()
     .alias('help', 'h').argv;
 
-
-updateBaseDirPath(argv["base-dir"]);
+const c = getConfigurations();
+if (typeof argv["base-dir"] === "string") {
+    c.baseDir = path.resolve(argv["base-dir"]);
+}
+refreshConfigurations(argv["config-path"]);
 
 const app = new App([
     new FilesController("/api"),
     new ConfigController("/api"),
 ], parseInt(argv.port));
+
+console.log("[config] configuration is\n", JSON.stringify(getConfigurations(), null, "\t"))
 
 app.listen();

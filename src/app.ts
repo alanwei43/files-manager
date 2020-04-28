@@ -31,16 +31,18 @@ class App {
             limit: (Config.uploadFileSize || "50") + "mb"
         }));
         this.app.use(bodyParser.urlencoded({ extended: true }));
+        const staticDir = path.resolve(path.join(__dirname, "../static"));
+        console.log("web app dir:", staticDir);
         this.app.use((req, res, next) => {
             if (req.path.startsWith("/api")) {
                 next();
                 return;
             }
             if (req.path.startsWith("/js") || req.path.startsWith("/resources")) {
-                res.sendFile(path.resolve(path.join("static", req.path)));
+                res.sendFile(path.join(staticDir, req.path));
                 return;
             }
-            res.sendFile(path.resolve("static/index.html"));
+            res.sendFile(path.join(staticDir, "index.html"));
         });
     }
 
@@ -52,7 +54,7 @@ class App {
 
     public listen() {
         this.app.listen(this.port, () => {
-            console.log(`App listening on the port ${this.port}`);
+            console.log(`App listening on the port ${this.port}, access by http://localhost:${this.port}/files-manager `);
         });
     }
 }
