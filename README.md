@@ -24,5 +24,6 @@ docker run -d -p 33022:8080 \
 ## NPM 使用
 
 ```bash
-npx @js-core/files-manager --port 8080 --base-dir ./
+npm install @js-core/files-manager -g --registry=https://registry.npm.taobao.org
+files-manager --port 8080 --base-dir ./
 ```
