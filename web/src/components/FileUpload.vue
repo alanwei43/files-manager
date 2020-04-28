@@ -1,23 +1,14 @@
 <template>
   <div>
     <input type="file" @change="selectFile" multiple />
-    <hr v-if="status.process.filter(item => item.show).length" />
-    <div
-      class="small"
-      v-for="process in status.process"
-      :key="process.key"
-      v-show="process.show"
-      :class="{'text-info': process.load === 'loading', 'text-success': process.load === 'success', 'text-danger': process.load === 'fail'}"
-    >
-      <i>{{process.name}}</i> &nbsp;
-      <span v-if="process.load === 'loading'">正在上传</span>
-      <span v-if="process.load === 'fail'">上传失败 {{process.error}}</span>
-      <span v-if="process.load === 'success'">上传成功</span>
-    </div>
+    <hr v-if="status.showedAlertCounts" />
+    <alert ref="Alert" style="width: auto; display: inline-block" @showed-alerts="alerts => status.showedAlertCounts = alerts.length" />
   </div>
 </template>
 <script>
-import { readFileToBase64, getRandomStr, postJSON } from "../lib";
+import { readFileToBase64, getRandomStr, postJSON, ShareStore } from "../lib";
+import Alert from "./Alert";
+
 export default {
   props: {
     path: {
@@ -30,7 +21,7 @@ export default {
         randomName: false
       },
       status: {
-        process: [],
+        showedAlertCounts: 0,
         onDraging: false
       }
     };
@@ -44,21 +35,26 @@ export default {
       files.forEach(f => this.uploadFile(f));
     },
     uploadFile(file) {
+      const size = file.size / 1024 / 1024;
+      if (size > ShareStore.config.uploadFileSize) {
+        this.$refs.Alert.alert({
+          html: `<b>${file.name}</b> 文件超出最大限制 ${ShareStore.config.uploadFileSize}MB`,
+          type: "danger",
+          closeable: true
+        });
+        return;
+      }
       let fileName = file.name;
       if (this.config.randomName) {
         const ext = file.name.split(".").slice(-1);
         fileName = getRandomStr() + "." + ext;
       }
 
-      const processInfo = {
-        key: getRandomStr(),
-        name: file.name,
-        path: this.path,
-        load: "loading",
-        error: undefined,
-        show: true
-      };
-      this.status.process.push(processInfo);
+      const alert = this.$refs.Alert.alert({
+        html: `<b>${fileName}</b> 正在上传`,
+        type: "info"
+      });
+
       readFileToBase64(file)
         .then(data =>
           postJSON("/api/files", {
@@ -69,7 +65,6 @@ export default {
         )
         .then(res => {
           if (res.success) {
-            processInfo.load = "success";
             this.$emit("upload-success", {
               ctime: new Date().toJSON(),
               isDir: false,
@@ -85,15 +80,20 @@ export default {
           }
         })
         .catch(err => {
-          processInfo.load = "fail";
-          processInfo.error = err.message || err;
-          return "fail";
+          return err.message;
         })
         .then(status => {
-          setTimeout(
-            () => (processInfo.show = false),
-            (status === "success" ? 2 : 60) * 1000
-          );
+          if (status === "success") {
+            alert.type = "success";
+            alert.html = `<b>${fileName}</b> 上传成功`;
+            setTimeout(function() {
+              alert.show = false;
+            }, 2 * 1000);
+          } else {
+            alert.type = "danger";
+            alert.html = `<b>${fileName}</b> 上传失败: ${status}`;
+            alert.closeable = true;
+          }
         });
     },
     initDrag() {
@@ -131,6 +131,9 @@ export default {
         false
       );
     }
+  },
+  components: {
+    alert: Alert
   }
 };
 </script>

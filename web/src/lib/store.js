@@ -1,8 +1,9 @@
 export const ShareStore = {
     config: {
-        title: "",
-        clientRootPath: "",
-        sysRootPath: "",
-        pathSeperator: ""
+        "title": "",
+        "clientRootPath": "",
+        "uploadFileSize": 50,
+        "sysRootPath": "",
+        "pathSeperator": ""
     }
 };

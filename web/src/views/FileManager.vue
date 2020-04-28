@@ -1,5 +1,6 @@
 <template>
   <div>
+    <alert ref="Alert" style="position: fixed; right: 0; top: 0; width: auto;" />
     <ol class="breadcrumb" v-if="share.config.title">
       <li>
         <a href="javascript:void(0)">{{share.config.title}}</a>
@@ -9,7 +10,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">拖拽/选择文件上传</div>
         <div class="panel-body">
-          <file-upload :path="route.path" @upload-success="onUploadSuccess" />
+          <file-upload :path="route.path" @upload-success="onUploadSuccess" @alert="alert" />
         </div>
       </div>
       <div class="panel panel-primary">
@@ -43,6 +44,7 @@
               :item="item"
               :path="route.path"
               @delete-file="onDeleteFile"
+              @alert="alert"
             />
           </tbody>
           <tfoot>
@@ -74,6 +76,7 @@ import {
 } from "../lib";
 import FileItem from "../components/FileItem";
 import FileUpload from "../components/FileUpload";
+import Alert from "../components/Alert";
 
 export default {
   data() {
@@ -180,6 +183,9 @@ export default {
           window.location.reload();
         }
       });
+    },
+    alert({ html, content, type, closeable, time }) {
+      this.$refs.Alert.alert({ html, content, type, closeable, time });
     }
   },
   computed: {
@@ -198,7 +204,8 @@ export default {
   },
   components: {
     "file-item": FileItem,
-    "file-upload": FileUpload
+    "file-upload": FileUpload,
+    alert: Alert
   },
   watch: {
     $route: "onRouteChange"

@@ -19,16 +19,24 @@
         <code v-if="fileAddress">{{fileAddress}}</code>
       </td>
       <td>
-        <span class="small text-info" v-if="item.isFile" title="大小 | 修改时间">{{item.size | showSize}} &nbsp; | &nbsp; {{item.mtime}}</span>
-        <span v-else>--</span>
+        <span
+          class="small text-info"
+          v-if="item.isFile"
+          title="大小 | 修改时间"
+        >{{item.size | showSize}} &nbsp; | &nbsp; {{item.mtime}}</span>
       </td>
       <td>
-        <button class="btn btn-danger btn-xs" @click="doDeleteFile(item)">删除</button> &nbsp;
+        <button
+          class="btn btn-danger btn-sm"
+          @click="doDeleteFile(item)"
+          :title="`删除文件 ${item.name}`"
+        >删除</button> &nbsp;
         <a
           v-if="downloadLink"
-          class="btn btn-default btn-xs"
+          class="btn btn-default btn-sm"
           target="blank"
           :href="downloadLink"
+          :title="`下载文件 ${item.name}`"
         >下载</a> &nbsp;
       </td>
     </template>
@@ -64,6 +72,13 @@ export default {
       fn(this.path, this.item.name).then(res => {
         if (res.success) {
           this.$emit("delete-file", item);
+        } else {
+          this.$emit("alert", {
+            html: `<b>${this.item.name}</b> 删除失败: ${res.message}`,
+            type: "danger",
+            closeable: true,
+            time: 5 * 1000
+          });
         }
       });
     }
