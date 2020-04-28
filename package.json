@@ -13,6 +13,7 @@
     "docker:build": "docker build -t files-manager:0.0.1 ./",
     "docker:push": "docker tag files-manager:0.0.1 alanway/files-manager:latest && docker push alanway/files-manager:latest",
     "docker:run": "docker run -d -P --name files-manager-test files-manager:0.0.1",
+    "docker:rm": "docker stop files-manager-test && docker rm files-manager-test",
     "pub": "npm publish --access public"
   },
   "bin": {
