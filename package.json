@@ -1,6 +1,6 @@
 {
   "name": "@js-core/files-manager",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "file manager on server",
   "main": "index.js",
   "scripts": {
