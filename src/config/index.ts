@@ -8,7 +8,8 @@ const targetConfig: any = {
     clientRootPath: "/mock", // 前端展示的根目录
     runRootPath: path.resolve("./"),
     pathSeperator: path.sep,
-    baseDir: path.resolve("./") //资源管理根目录
+    baseDir: path.resolve("./"), //资源管理根目录
+    editorAddress: ""
 };
 const proxyConfig: any = new Proxy(targetConfig, {
     set: function (target, prop: any, val: any) {

@@ -1,11 +1,15 @@
 <template>
   <div>
     <alert ref="Alert" style="position: fixed; right: 0; top: 0; width: auto;" />
-    <ol class="breadcrumb" v-if="share.config.title">
-      <li>
+    <ol class="breadcrumb">
+      <li v-if="share.config.title">
         <a href="javascript:void(0)">{{share.config.title}}</a>
       </li>
+      <li v-if="share.config.editorAddress">
+        <a :href="share.config.editorAddress">文件编辑器</a>
+      </li>
     </ol>
+
     <div class="container-fluid" style="margin-top: 1em;">
       <div class="panel panel-default">
         <div class="panel-heading">拖拽/选择文件上传</div>

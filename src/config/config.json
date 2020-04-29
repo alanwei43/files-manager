@@ -1,5 +1,6 @@
 {
   "title": "文件管理系统",
   "clientRootPath": "/mock",
-  "uploadFileSize": 50
+  "uploadFileSize": 50,
+  "editorAddress": "http://localhost:33024/"
 }
