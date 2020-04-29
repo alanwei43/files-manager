@@ -22,8 +22,8 @@
         <span
           class="small text-info"
           v-if="item.isFile"
-          title="大小 | 修改时间"
-        >{{item.size | showSize}} &nbsp; | &nbsp; {{item.mtime}}</span>
+          title="大小 / 修改时间"
+        >{{item.size | showSize}} &nbsp; / &nbsp; {{item.mtime | showDate}}</span>
       </td>
       <td>
         <button
@@ -50,6 +50,8 @@ import {
   deleteDir,
   humanSize
 } from "../lib";
+import { parseJSON, format } from "date-fns";
+
 export default {
   props: {
     item: {
@@ -62,7 +64,6 @@ export default {
   data() {
     return {};
   },
-  mounted() {},
   methods: {
     doDeleteFile(item) {
       let fn = deleteFile;
@@ -86,6 +87,12 @@ export default {
   filters: {
     showSize(size) {
       return humanSize(size).size + humanSize(size).unit;
+    },
+    showDate(date) {
+      if (typeof date === "string") {
+        return format(parseJSON(date), "yyyy-MM-dd HH:mm:ss").toString();
+      }
+      return "";
     }
   },
   computed: {

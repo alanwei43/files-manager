@@ -26,7 +26,7 @@ const argv = yargs
         type: "string",
         default: path.join(__dirname, "./config/config.json")
     })
-    .version("0.0.3")
+    .version("0.0.4")
     .help()
     .alias('help', 'h').argv;
 
